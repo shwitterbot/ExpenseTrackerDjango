@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Вход — Кошелёк{% endblock %}
+
+{% block content %}
+<main class="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-md flex-col justify-center px-4 py-12">
+  <div class="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+    <h1 class="text-xl font-semibold tracking-tight text-foreground">Вход</h1>
+    <p class="mt-1 text-sm text-muted-foreground">Войдите, чтобы вести учёт расходов</p>
+
+    <form method="post" class="mt-6 space-y-4">
+      {% csrf_token %}
+      {% for field in form %}
+        <label class="block">
+          <span class="text-sm text-muted-foreground">{{ field.label }}</span>
+          {{ field }}
+          {% for error in field.errors %}
+            <span class="mt-1 block text-xs text-destructive">{{ error }}</span>
+          {% endfor %}
+        </label>
+      {% endfor %}
+      {% if form.non_field_errors %}
+        <p class="text-xs text-destructive">{{ form.non_field_errors }}</p>
+      {% endif %}
+
+      <button type="submit"
+        class="w-full rounded-full bg-primary py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90">
+        Войти
+      </button>
+    </form>
+
+    <p class="mt-4 text-center text-sm text-muted-foreground">
+      Нет аккаунта?
+      <a href="{% url 'users:register' %}" class="font-medium text-primary hover:underline">Зарегистрироваться</a>
+    </p>
+  </div>
+</main>
+{% endblock %}

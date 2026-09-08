@@ -1,0 +1,89 @@
+{% comment %}
+  Модальное окно добавления операции — БЕЗ JS.
+  Открытие/закрытие через скрытый чекбокс + peer-checked (Tailwind).
+  Переключатель Расход/Доход и выбор категории — обычные radio.
+  Блок категории скрывается для дохода правилом :has() в theme.css.
+
+  Инклюдится дважды (десктоп-шапка и мобильная панель), поэтому id
+  чекбокса уникален через переменную scope — здесь используем общий id,
+  два тега <input> с одним id безопасны для чекбокса-переключателя,
+  но чтобы избежать конфликта, оборачиваем в отдельные группы.
+{% endcomment %}
+<div class="contents">
+  <input type="checkbox" id="add-tx" class="peer sr-only" />
+
+  <label for="add-tx"
+    class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90 sm:w-auto">
+    <i data-lucide="plus" class="size-4"></i>
+    Добавить операцию
+  </label>
+
+  <!-- Оверлей -->
+  <div class="fixed inset-0 z-50 hidden items-end justify-center bg-foreground/40 backdrop-blur-sm peer-checked:flex sm:items-center sm:p-4">
+    <!-- Клик по фону закрывает -->
+    <label for="add-tx" class="absolute inset-0 cursor-default" aria-label="Закрыть"></label>
+
+    <div class="relative w-full max-w-md rounded-t-3xl border border-border bg-card p-6 shadow-lg sm:rounded-3xl">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-semibold text-foreground">Новая операция</h2>
+        <label for="add-tx"
+          class="grid size-8 cursor-pointer place-items-center rounded-full text-muted-foreground transition hover:bg-muted">
+          <i data-lucide="x" class="size-4"></i>
+        </label>
+      </div>
+
+      <form method="post" action="{% url 'expenses:add_transaction' %}" class="tx-form mt-5 space-y-4">
+        {% csrf_token %}
+
+        <!-- Переключатель типа -->
+        <div class="grid grid-cols-2 gap-2 rounded-full bg-muted p-1">
+          <label class="cursor-pointer">
+            <input type="radio" name="type" value="expense" class="peer sr-only" checked />
+            <span class="block rounded-full py-2 text-center text-sm font-medium text-muted-foreground transition peer-checked:bg-card peer-checked:text-foreground peer-checked:shadow-sm">
+              Расход
+            </span>
+          </label>
+          <label class="cursor-pointer">
+            <input type="radio" name="type" value="income" class="peer sr-only" />
+            <span class="block rounded-full py-2 text-center text-sm font-medium text-muted-foreground transition peer-checked:bg-card peer-checked:text-foreground peer-checked:shadow-sm">
+              Доход
+            </span>
+          </label>
+        </div>
+
+        <label class="block">
+          <span class="text-sm text-muted-foreground">Описание</span>
+          <input name="title" required placeholder="Например, продукты"
+            class="mt-1.5 w-full rounded-xl border border-input bg-background px-3.5 py-2.5 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+        </label>
+
+        <label class="block">
+          <span class="text-sm text-muted-foreground">Сумма, ₽</span>
+          <input name="amount" inputmode="decimal" required placeholder="0"
+            class="mt-1.5 w-full rounded-xl border border-input bg-background px-3.5 py-2.5 font-mono text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+        </label>
+
+        <!-- Категория (скрывается для дохода через :has() в theme.css) -->
+        <div class="category-block">
+          <span class="text-sm text-muted-foreground">Категория</span>
+          <div class="mt-1.5 flex flex-wrap gap-2">
+            {% for cat in expense_categories %}
+              <label class="cursor-pointer">
+                <input type="radio" name="category" value="{{ cat.id }}" class="peer sr-only" {% if forloop.first %}checked{% endif %} />
+                <span class="flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:border-primary/40 peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:text-primary">
+                  <i data-lucide="{{ cat.icon }}" class="size-3.5"></i>
+                  {{ cat.name }}
+                </span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <button type="submit"
+          class="w-full rounded-full bg-primary py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90">
+          Сохранить
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

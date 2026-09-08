@@ -1,0 +1,37 @@
+{% load tracker_extras %}
+<section class="rounded-2xl border border-border bg-card p-5 shadow-sm">
+  <h2 class="text-sm font-semibold text-foreground">Расходы по категориям</h2>
+
+  <div class="mt-5 flex flex-col items-center gap-6">
+    <div class="relative shrink-0">
+      <div class="size-40 rounded-full" style="background: {{ gradient }};"
+           role="img" aria-label="Круговая диаграмма расходов по категориям"></div>
+      <div class="absolute inset-3 grid place-items-center rounded-full bg-card">
+        <div class="text-center">
+          <p class="text-xs text-muted-foreground">Всего</p>
+          <p class="font-mono text-sm font-semibold text-foreground">{{ expenses|rub }}</p>
+        </div>
+      </div>
+    </div>
+
+    <ul class="w-full space-y-3">
+      {% for row in breakdown %}
+        <li>
+          <div class="flex items-center justify-between text-sm">
+            <span class="flex items-center gap-2 text-foreground">
+              <span class="size-2.5 rounded-full" style="background-color: oklch(var(--{{ row.color }}));"></span>
+              {{ row.name }}
+            </span>
+            <span class="font-mono text-muted-foreground">{{ row.pct }}%</span>
+          </div>
+          <div class="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+            <div class="h-full rounded-full"
+                 style="width: {{ row.pct }}%; background-color: oklch(var(--{{ row.color }}));"></div>
+          </div>
+        </li>
+      {% empty %}
+        <li class="text-sm text-muted-foreground">Пока нет расходов.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>

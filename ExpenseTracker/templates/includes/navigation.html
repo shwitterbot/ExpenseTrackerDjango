@@ -1,0 +1,24 @@
+{% load static %}
+<link href="{% static 'css/navigation.css' %}" rel="stylesheet" />
+
+<nav>
+  <div class="nav-left">
+    <div class="logo-circle">💼</div>
+    <div class="nav-title">
+      <h1>Кошелёк</h1>
+      <p>Ваши финансы за месяц</p>
+    </div>
+  </div>
+
+  <div class="nav-right">
+    {% if user.is_authenticated %}
+      <form method="post" action="{% url 'users:logout' %}" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="btn-ghost">Выйти</button>
+      </form>
+    {% else %}
+      <button id="loginButton" type="button" class="btn-ghost">Вход</button>
+      <button id="registerButton" type="button" class="btn-primary">Регистрация</button>
+    {% endif %}
+  </div>
+</nav>

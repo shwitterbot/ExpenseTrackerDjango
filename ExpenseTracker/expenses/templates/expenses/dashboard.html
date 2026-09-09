@@ -1,35 +1,28 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link href="{% static 'css/dashboard.css' %}" rel="stylesheet" />
+<link href="{% static 'css/partials/_transactions.css' %}" rel="stylesheet" />
+{% endblock %}
 
 {% block content %}
-<main class="mx-auto w-full max-w-7xl px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:py-10 lg:pb-10">
+<div class="dashboard">
 
-  <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-    <div>
-      <h1 class="text-2xl font-semibold tracking-tight text-foreground text-balance">Финансы за месяц</h1>
-      <p class="mt-1 text-sm text-muted-foreground">Доходы, расходы и разбивка по категориям</p>
-    </div>
-    <div class="hidden sm:block">
-      {% include "expenses/partials/_add_transaction.html" %}
-    </div>
-  </div>
-
-  <div class="mt-6 grid grid-cols-1 gap-6 lg:mt-8 lg:grid-cols-3">
-    <!-- Левая (широкая) колонка -->
-    <div class="flex flex-col gap-6 lg:col-span-2">
+  <div class="dashboard-grid">
+    <div class="dashboard-col-main">
       {% include "expenses/partials/_summary.html" %}
       {% include "expenses/partials/_transactions.html" %}
     </div>
-
-    <!-- Правая колонка -->
-    <div class="flex flex-col gap-6">
+    <div class="dashboard-col-side">
       {% include "expenses/partials/_breakdown.html" %}
-      {% include "expenses/partials/_categories.html" %}
     </div>
   </div>
-</main>
-
-<!-- Мобильная закреплённая кнопка добавления -->
-<div class="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/90 p-4 backdrop-blur sm:hidden">
   {% include "expenses/partials/_add_transaction.html" %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+<script src="{% static 'js/partials/_add_transactions.js' %}"></script>
 {% endblock %}

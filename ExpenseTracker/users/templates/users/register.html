@@ -1,37 +1,34 @@
-{% extends "base.html" %}
-{% block title %}Регистрация — Кошелёк{% endblock %}
+<div id="registerModal" class="modal">
+  <div class="modal-content">
+    <h1>Регистрация</h1>
+    <p>Создайте аккаунт — стартовые категории добавятся автоматически</p>
 
-{% block content %}
-<main class="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-md flex-col justify-center px-4 py-12">
-  <div class="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
-    <h1 class="text-xl font-semibold tracking-tight text-foreground">Регистрация</h1>
-    <p class="mt-1 text-sm text-muted-foreground">Создайте аккаунт — стартовые категории добавятся автоматически</p>
+    <button id="closeRegister" type="button" class="modal-close">×</button>
 
-    <form method="post" class="mt-6 space-y-4">
+    <form method="post" action="{% url 'users:register' %}">
       {% csrf_token %}
-      {% for field in form %}
-        <label class="block">
-          <span class="text-sm text-muted-foreground">{{ field.label }}</span>
+      {% for field in register_form %}
+        <label>
+          <span>{{ field.label }}</span>
           {{ field }}
+          {% if register_form.errors %}
           {% if field.help_text %}
-            <span class="mt-1 block text-xs text-muted-foreground">{{ field.help_text|safe }}</span>
+            <span class="help">{{ field.help_text|safe }}</span>
           {% endif %}
+          {% endif %}
+
           {% for error in field.errors %}
-            <span class="mt-1 block text-xs text-destructive">{{ error }}</span>
+            <span class="error">{{ error }}</span>
           {% endfor %}
         </label>
       {% endfor %}
 
-      <button type="submit"
-        class="w-full rounded-full bg-primary py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90">
-        Создать аккаунт
-      </button>
+      <button type="submit" class="btn-primary">Создать аккаунт</button>
     </form>
 
-    <p class="mt-4 text-center text-sm text-muted-foreground">
+    <p>
       Уже есть аккаунт?
-      <a href="{% url 'users:login' %}" class="font-medium text-primary hover:underline">Войти</a>
+      <a href="#" id="switchToLogin">Войти</a>
     </p>
   </div>
-</main>
-{% endblock %}
+</div>

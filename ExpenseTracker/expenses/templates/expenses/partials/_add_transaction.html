@@ -19,6 +19,12 @@
         </div>
       </div>
 
+      {# Описание #}
+      <div class="field">
+        <span class="field-label">{{ transaction_form.description.label }}</span>
+        {{ transaction_form.description }}
+      </div>
+
       {# Сумма #}
       <div class="field">
         <span class="field-label">{{ transaction_form.amount.label }}</span>
@@ -36,12 +42,6 @@
             </label>
           {% endfor %}
         </div>
-      </div>
-
-      {# Описание #}
-      <div class="field">
-        <span class="field-label">{{ transaction_form.description.label }}</span>
-        {{ transaction_form.description }}
       </div>
 
       {# Дата #}

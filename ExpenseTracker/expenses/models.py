@@ -14,9 +14,9 @@ class Transaction(models.Model):
         EXPENSE = 'expense', 'Расход'
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='transactions')
-    transaction_type = models.CharField(max_length=10, choices=TransactionType.choices, default=TransactionType.EXPENSE)
-    description = models.TextField()
+    title = models.TextField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+    type = models.CharField(max_length=10, choices=TransactionType.choices, default=TransactionType.EXPENSE)
     category = models.ForeignKey('Category', on_delete=models.SET_NULL, related_name="transactions", null=True)
     date = models.DateField(verbose_name='Дата', auto_now=True)
 

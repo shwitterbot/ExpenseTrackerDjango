@@ -10,9 +10,14 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import TemplateView, CreateView, ListView
+from rest_framework import viewsets
+
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from expenses.form import AddTransactionForm
 from expenses.models import Transaction
+from expenses.serializers import TransactionSerializer
 
 CATEGORY_COLORS = {
     "🛒": "#ef6f6f", "🍽️": "#f39c4a", "🚗": "#5b8def", "🏠": "#e0567a",
@@ -101,3 +106,15 @@ class HomepageView(LoginView, TemplateView):
         context["login_form"] = AuthenticationForm()
         context["register_form"] = UserCreationForm()
         return context
+
+
+class TransactionViewSet(viewsets.ModelViewSet):
+    serializer_class = TransactionSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        return Transaction.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(user=user)

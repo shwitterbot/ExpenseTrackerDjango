@@ -57,3 +57,7 @@ class TransactionTest(TestCase):
         response = view(request, pk=transaction.id)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['title'], transaction.title)
+        self.assertEqual(response.data['amount'], '100.00')
+        self.assertEqual(response.data['type'], transaction.type)
+        self.assertEqual(response.data['category'], transaction.category.id)

@@ -50,10 +50,10 @@ class TransactionTest(TestCase):
 
         view = TransactionViewSet.as_view({'get': 'retrieve'})
 
-        request = self.factory.get("/api/v1/expenses/1/")
+        request = self.factory.get(f"/api/v1/expenses/{transaction.id}/")
 
         force_authenticate(request, user=self.user)
 
-        response = view(request, pk=1)
+        response = view(request, pk=transaction.id)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

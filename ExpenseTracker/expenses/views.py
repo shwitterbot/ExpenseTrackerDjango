@@ -13,7 +13,7 @@ from django.views.generic import TemplateView, CreateView, ListView
 from rest_framework import viewsets
 
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 from expenses.form import AddTransactionForm
 from expenses.models import Transaction
@@ -43,11 +43,11 @@ class DashboardView(LoginRequiredMixin, ListView):
             date__lte=today,
         )
 
-        income = qs.filter(transaction_type="income").aggregate(s=Sum("amount"))["s"] or Decimal(0)
-        expense = qs.filter(transaction_type="expense").aggregate(s=Sum("amount"))["s"] or Decimal(0)
+        income = qs.filter(type="income").aggregate(s=Sum("amount"))["s"] or Decimal(0)
+        expense = qs.filter(type="expense").aggregate(s=Sum("amount"))["s"] or Decimal(0)
 
         by_category = (
-            qs.filter(transaction_type="expense")
+            qs.filter(type="expense")
             .values("category__title", "category__icon")
             .annotate(total=Sum("amount"))
             .order_by("-total")
@@ -110,11 +110,10 @@ class HomepageView(LoginView, TemplateView):
 
 class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Transaction.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        user = self.request.user
-        serializer.save(user=user)
+        serializer.save(user=self.request.user)

@@ -24,7 +24,7 @@ class Transaction(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.description
+        return self.title
 
 class Category(models.Model):
     class Icon(models.TextChoices):

@@ -6,18 +6,25 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, FormView, CreateView
+from rest_framework.views import APIView
 
 from .form import UserLoginForm, UserRegisterForm
+from .serializers import UserSerializer
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 
 
 # Create your views here.
-class RegisterUser(CreateView):
-    model = User
-    template_name = "users/register.html"
-    success_url = reverse_lazy('expenses:dashboard')
-    form_class = UserRegisterForm
+# class RegisterUser(CreateView):
+#     model = User
+#     template_name = "users/register.html"
+#     success_url = reverse_lazy('expenses:dashboard')
+#     form_class = UserRegisterForm
+#
+# class LoginUser(LoginView):
+#     template_name = "users/login.html"
+#     success_url = reverse_lazy('expenses:dashboard')
+#     form_class = UserLoginForm
 
-class LoginUser(LoginView):
-    template_name = "users/login.html"
-    success_url = reverse_lazy('expenses:dashboard')
-    form_class = UserLoginForm
+class RegisterApi(CreateAPIView):
+    serializer_class = UserSerializer
+

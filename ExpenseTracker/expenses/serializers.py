@@ -6,4 +6,5 @@ from expenses.models import Transaction
 class TransactionSerializer(ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ['title', 'amount', 'type', 'category']
+        fields = ['id', 'title', 'amount', 'type', 'category', 'date']
+        read_only_fields = ['id', 'date']

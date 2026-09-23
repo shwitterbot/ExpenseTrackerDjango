@@ -18,9 +18,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from expenses.templatetags.tracker_extras import register
+from users.views import RegisterApi
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include('expenses.urls')),
     path("users/", include('users.urls')),
+
+    path("api-auth/", include('rest_framework.urls')),
+    path("api-auth/register/", RegisterApi.as_view(), name='register'),
 ]

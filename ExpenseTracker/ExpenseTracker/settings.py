@@ -52,6 +52,11 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:3000',
+    'http://localhost:3000',
+]
+
 ROOT_URLCONF = "ExpenseTracker.urls"
 
 TEMPLATES = [
@@ -125,6 +130,6 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-LOGIN_URL = 'users:login'
-LOGIN_REDIRECT_URL = 'expenses:dashboard'
-LOGOUT_REDIRECT_URL = 'expenses:homepage'
+# LOGIN_URL = 'users:login'
+# LOGIN_REDIRECT_URL = 'expenses:dashboard'
+# LOGOUT_REDIRECT_URL = 'expenses:homepage'

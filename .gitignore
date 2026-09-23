@@ -102,3 +102,4 @@ reports/
 *.sqlite
 *.mdb
 *.accdb
+run-project.sh

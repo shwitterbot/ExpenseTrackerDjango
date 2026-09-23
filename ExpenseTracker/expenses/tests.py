@@ -29,6 +29,66 @@ class TransactionTest(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    def test_create_expense_transaction(self):
+        request = self.factory.post(
+            "/api/v1/expenses/",
+            data={
+                'title': 'Food',
+                'amount': 1000,
+                'type': 'expense',
+                'category': self.category.id,
+            },
+            format="json"
+        )
+
+        force_authenticate(request, user=self.user)
+
+        response = self.view(request)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_income_transaction(self):
+        request = self.factory.post(
+            "/api/v1/expenses/",
+            data={
+                'title': 'Salary',
+                'amount': 100000,
+                'type': 'income',
+                'category': self.category.id,
+            },
+            format="json"
+        )
+
+        force_authenticate(request, user=self.user)
+
+        response = self.view(request)
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_201_CREATED
+        )
+
+    def test_create_transaction_invalid_type(self):
+        request = self.factory.post(
+            "/api/v1/expenses/",
+            data={
+                'title': 'Test Transaction',
+                'amount': 100,
+                'type': 'dfjsgsljdfjg',
+                'category': self.category.id,
+            },
+            format="json"
+        )
+
+        force_authenticate(request, user=self.user)
+
+        response = self.view(request)
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_400_BAD_REQUEST
+        )
+
     def test_get_transactions(self):
 
         request = self.factory.get("api/v1/expenses/")

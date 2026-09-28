@@ -9,9 +9,11 @@ export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, '') || '/backend'
 
 const TRANSACTIONS_URL = `${API_BASE_URL}/api/v1/transactions/`
-const REGISTER_URL = `${API_BASE_URL}/api-auth/register/`
-const LOGIN_URL = `${API_BASE_URL}/api-auth/login/?next=/`
-const LOGOUT_URL = `${API_BASE_URL}/api-auth/logout/`
+const AUTH_BASE_URL = `${API_BASE_URL}/users/api-auth`
+const REGISTER_URL = `${AUTH_BASE_URL}/register/`
+const LOGIN_URL = `${AUTH_BASE_URL}/login/?next=/`
+const LOGOUT_URL = `${AUTH_BASE_URL}/logout/`
+const CHANGE_PASSWORD_URL = `${AUTH_BASE_URL}/users/change_password/`
 
 const categoryByBackendId: Record<number, CategoryId> = {
   1: 'groceries',
@@ -265,6 +267,22 @@ export async function loginUser(payload: { username: string; password: string })
   }
 
   return { username: payload.username }
+}
+
+export type ChangePasswordPayload = {
+  old_password: string
+  new_password_1: string
+  new_password_2: string
+}
+
+export async function changePassword(payload: ChangePasswordPayload): Promise<void> {
+  const response = await csrfFetch(CHANGE_PASSWORD_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+
+  await readJson<{ detail?: string }>(response)
 }
 
 export async function logoutUser(): Promise<void> {

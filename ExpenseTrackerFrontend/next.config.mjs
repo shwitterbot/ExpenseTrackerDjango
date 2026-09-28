@@ -12,16 +12,20 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/backend/api-auth/register/',
-        destination: `${backendUrl}/api-auth/register/`,
+        source: '/backend/users/api-auth/register/',
+        destination: `${backendUrl}/users/api-auth/register/`,
       },
       {
-        source: '/backend/api-auth/login/',
-        destination: `${backendUrl}/api-auth/login/`,
+        source: '/backend/users/api-auth/login/',
+        destination: `${backendUrl}/users/api-auth/login/`,
       },
       {
-        source: '/backend/api-auth/logout/',
-        destination: `${backendUrl}/api-auth/logout/`,
+        source: '/backend/users/api-auth/logout/',
+        destination: `${backendUrl}/users/api-auth/logout/`,
+      },
+      {
+        source: '/backend/users/api-auth/users/change_password/',
+        destination: `${backendUrl}/users/api-auth/users/change_password/`,
       },
       {
         source: '/backend/api/v1/transactions/:id',

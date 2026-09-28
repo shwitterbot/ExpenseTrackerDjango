@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { LogIn, LogOut, UserPlus, X } from 'lucide-react'
+import { KeyRound, LogIn, LogOut, UserPlus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { loginUser, logoutUser, registerUser } from '@/lib/transactions-api'
+import { changePassword, loginUser, logoutUser, registerUser } from '@/lib/transactions-api'
 
 type Mode = 'login' | 'register'
 
@@ -20,6 +20,9 @@ export function AuthPanel({ onAuthChange }: Props) {
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const [currentUser, setCurrentUser] = useState<string | null>(null)
+  const [passwordOpen, setPasswordOpen] = useState(false)
+  const [passwordBusy, setPasswordBusy] = useState(false)
+  const [passwordError, setPasswordError] = useState<string | null>(null)
 
   function resetForm() {
     setUsername('')
@@ -65,20 +68,121 @@ export function AuthPanel({ onAuthChange }: Props) {
       // ignore and clear local UI anyway
     } finally {
       setCurrentUser(null)
+      setPasswordOpen(false)
       onAuthChange?.(null)
+    }
+  }
+
+  async function submitPasswordChange(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setPasswordError(null)
+    setPasswordBusy(true)
+
+    const formData = new FormData(e.currentTarget)
+
+    try {
+      await changePassword({
+        old_password: String(formData.get('old_password') ?? ''),
+        new_password_1: String(formData.get('new_password_1') ?? ''),
+        new_password_2: String(formData.get('new_password_2') ?? ''),
+      })
+      e.currentTarget.reset()
+      setPasswordOpen(false)
+    } catch (err) {
+      setPasswordError(err instanceof Error ? err.message : 'Не удалось изменить пароль')
+    } finally {
+      setPasswordBusy(false)
     }
   }
 
   if (currentUser) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="relative flex items-center gap-2">
         <span className="rounded-full border border-border px-3 py-1.5 text-sm text-foreground">
           {currentUser}
         </span>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            setPasswordOpen((value) => !value)
+            setPasswordError(null)
+          }}
+        >
+          <KeyRound className="size-4" aria-hidden="true" />
+          Пароль
+        </Button>
         <Button type="button" variant="outline" size="sm" onClick={signOut}>
           <LogOut className="size-4" aria-hidden="true" />
           Выйти
         </Button>
+
+        {passwordOpen && (
+          <div className="absolute right-0 top-full z-50 mt-3 w-[min(380px,calc(100vw-2rem))] rounded-3xl border border-border bg-card p-6 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  Безопасность
+                </span>
+                <h2 className="mt-1 text-xl font-semibold text-foreground">Смена пароля</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPasswordOpen(false)}
+                className="grid size-8 place-items-center rounded-full border border-border text-muted-foreground transition hover:bg-muted"
+                aria-label="Закрыть"
+              >
+                <X className="size-4" aria-hidden="true" />
+              </button>
+            </div>
+
+            <form onSubmit={submitPasswordChange} className="mt-5 space-y-4">
+              <label className="block">
+                <span className="text-sm text-muted-foreground">Текущий пароль</span>
+                <input
+                  name="old_password"
+                  type="password"
+                  autoComplete="current-password"
+                  className="mt-1.5 w-full rounded-xl border border-input bg-background px-3.5 py-2.5 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  required
+                />
+              </label>
+
+              <label className="block">
+                <span className="text-sm text-muted-foreground">Новый пароль</span>
+                <input
+                  name="new_password_1"
+                  type="password"
+                  autoComplete="new-password"
+                  className="mt-1.5 w-full rounded-xl border border-input bg-background px-3.5 py-2.5 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  required
+                />
+              </label>
+
+              <label className="block">
+                <span className="text-sm text-muted-foreground">Повторите новый пароль</span>
+                <input
+                  name="new_password_2"
+                  type="password"
+                  autoComplete="new-password"
+                  className="mt-1.5 w-full rounded-xl border border-input bg-background px-3.5 py-2.5 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  required
+                />
+              </label>
+
+              {passwordError && (
+                <div className="rounded-xl border border-destructive/50 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+                  {passwordError}
+                </div>
+              )}
+
+              <Button type="submit" className="w-full rounded-full" size="lg" disabled={passwordBusy}>
+                {passwordBusy ? '...' : 'Сохранить пароль'}
+              </Button>
+            </form>
+          </div>
+        )}
       </div>
     )
   }
